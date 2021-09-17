@@ -1,0 +1,9 @@
+使用方法：
+public class Main {
+	public static void main(String[] args) {
+		String logoFilePath="F:\\aa.png";
+		File logoFile = new File(logoFilePath);
+		File qr = QrcodeUtil.generateQRCodeWithLogo("hello", 200, logoFile, "png");
+		System.out.println(qr.getAbsolutePath());
+	}
+}
