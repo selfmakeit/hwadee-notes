@@ -5,14 +5,10 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
@@ -45,34 +41,10 @@ public class QrcodeUtil {
 	 */
 //	public static void main(String[] args) {
 //		
-//		String content="https://music.163.com/#/song?id=20954458";
 //		String logoFilePath="F:\\aa.png";
-//		String saveFilePath="F:\\qr2code.png";
-//		String filename="F:\\plcode.png";
-//		Qrcode generator = new Qrcode();
-//		generator.setLogoFile( new File( logoFilePath));
-//		File targetFile = new File( saveFilePath);
-//		
-//		OutputStream os=null;
-//		try {
-//			generator.setGeneratedFileStream( new FileOutputStream(targetFile));
-//			generator.createQrCode( content, 300, "png");
-//			os=generator.getGeneratedFileStream();
-//			os.flush();//强制刷新出去
-//			System.out.println("done.");
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}finally {
-//			if(null!=os){
-//				try {
-//					os.close();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					System.out.println("关闭输出资源失败");
-//				}
-//			}
-//		}
+//	File logoFile = new File(logoFilePath);
+//	File qr = QrcodeUtil.generateQRCodeWithLogo("hello", 200, logoFile, "png");
+//	System.out.println(qr.getAbsolutePath());
 //
 //	}
 	public static File  generateQRCodeWithLogo(String content,int size,File logoFile,String qrFileType) {
@@ -100,6 +72,7 @@ public class QrcodeUtil {
 			return targetFile;
 	}
 	/**
+	 * logo图片不能太大
 	 * Call this method to create a QR-code image. You must provide the
 	 * OutputStream where the image data can be written.
 	 * 
@@ -187,15 +160,18 @@ public class QrcodeUtil {
 		 * @param qrCodeSize
 		 * @param filename
 		 */
-		private void createPlainQrCode(String content, int qrCodeSize, String filename){
+		public static File createPlainQrCode(String content, int qrCodeSize,String qrFileType){
+			File targetFile = null;
 			try {
+				targetFile = new File(System.getProperty( "user.dir" )+(new Date()).getTime()+"."+qrFileType);
 				BitMatrix matrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, qrCodeSize, qrCodeSize);
-				MatrixToImageWriter.writeToFile(matrix, filename.substring(filename.lastIndexOf('.')+1), new File(filename));
+				MatrixToImageWriter.writeToFile(matrix, qrFileType, targetFile);
 				
 			} catch (IOException | WriterException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			return targetFile;
 		}
 	/**
 	 * Calc scale rate of logo. It is 30% of QR-code size
@@ -239,6 +215,7 @@ public class QrcodeUtil {
 		try {
 			LuminanceSource source = new BufferedImageLuminanceSource(image);	      
 			BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));	      
+			@SuppressWarnings("unchecked")
 			Result result = new MultiFormatReader().decode(bitmap, Collections.EMPTY_MAP);	      
 			return result;
 		} catch (NotFoundException nfe) {
