@@ -104,6 +104,34 @@ export let spike ={
 				console.log('预期需要下载的数据总长度' + res.totalBytesExpectedToWrite);
 		});
 	},
+	//预览保存图片
+	previewAndDownImg(imageUrl){
+	        var images = [];
+	        images.push(imageUrl);
+	        console.log(images)  // ["http://192.168.100.251:8970/6_1597822634094.png"]
+	        uni.previewImage({ // 预览图片  图片路径必须是一个数组 => ["http://192.168.100.251:8970/6_1597822634094.png"]
+	            current:0,
+	            urls:images,
+	            longPressActions: {  //长按保存图片到相册
+	                itemList: ['保存图片'],
+	                success: (data)=> {
+	                    console.log(data);
+	                    uni.saveImageToPhotosAlbum({ //保存图片到相册
+	                        filePath: payUrl,
+	                        success: function () {
+	                            uni.showToast({icon:'success',title:'保存成功'})
+	                        },
+	                        fail: (err) => {
+	                            uni.showToast({icon:'none',title:'保存失败，请重新尝试'})
+	                        }
+	                    });
+	                },
+	                fail: (err)=> {
+	                    console.log(err.errMsg);
+	                }
+	        }
+	        });
+	    },
 	/*验证是否为手机号或者座机号码 */
 	isTelCode(str) {
 			var reg=/(^(?:(?:0\d{2,3})-)?(?:\d{7,8})(-(?:\d{3,}))?$)|(^0{0,1}1[3|4|5|6|7|8|9][0-9]{9}$)/;
