@@ -31,23 +31,17 @@ Telegraf是一款Go语言编写的metrics收集、处理、聚合的代理其设
 * 添加influxdata存储库
 
 ```sh
-curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
-source /etc/lsb-release
-echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+#curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+#source /etc/lsb-release
+#echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
 
 ```
 
 * 安装并启动influxdb服务
 
 ```sh
-sudo apt-get update && sudo apt-get install influxdb
-sudo systemctl start influxdb
-```
-
-* 创建influxDB用户
-
-```sh
-create user “username”/username with password 'passwd' with all privileges
+#sudo apt-get update && sudo apt-get install influxdb
+#sudo systemctl start influxdb
 ```
 
 * 创建 Influxdb数据库
@@ -61,7 +55,18 @@ name: databases
 name
 _internal
 cqlcb_telegraf
+>use cqlcb_telegraf
+>CREATE USER "cqlcb" WITH PASSWORD 'cqlcb' WITH ALL PRIVILEGES
+>
 ```
+
+* 创建influxDB用户
+
+```bash
+>create user “username”/username with password 'passwd' with all privileges
+```
+
+
 
 * 数据库安装完成，可使用Cymaticlabs.InfluxDB连接工具进行可视化界面查询
 
@@ -82,7 +87,9 @@ vi /etc/telegraf/telegraf.conf
 
 ![img](ubuntu上  influxdb + telegraf (+grafana ) 安装配置.assets/20200206175513700.png)
 
-**假如安装telegraf时出现了E: Unable to locate package telegraf的话在开始部分添加库之后执行：**
+* vim搜索命令：输入“/”，在其后面输入要搜索的字符串回车，查看下一个匹配，按下n(小写n)，跳转到上一个匹配，按下N（大写N）
+
+假如安装telegraf时出现了E: Unable to locate package telegraf的话在开始部分添加库之后执行：**
 
 ```sh
  sudo apt-get update
