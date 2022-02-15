@@ -5,7 +5,7 @@
 <!--
 
 -->
-.main{width: 1000px;height: 600px;}
+.main{height: 600px;}
 
 
 </style>
@@ -139,11 +139,38 @@ function  <portlet:namespace/>echartsMapClick(params) {
 function <portlet:namespace/>init(url,<portlet:namespace/>data,type){
 	 
 	$.getJSON(url,function(geoJson){
-		
+		var regions = [];
+		if(type){
+			regions=[
+       	         {
+       	        	 name:"南海诸岛",
+       	        	 itemStyle:{
+       	        		 //
+       	        		 normal:{opacity:0}//隐藏地图
+       	        	 },
+       	        	 label:{show:false},//隐藏文字
+       	        	 
+       	         }
+        	]
+		};
 	    echarts.registerMap('china', geoJson);
 	    <portlet:namespace/>myChart.hideLoading();
 	    var <portlet:namespace/>mappoints=geoJson.features;
+	    //设置省市区大小
+	    var areaZoom=1.8;
+	    var areaX=geoJson.features[0].properties.center[0];
+	    if(areaX==undefined){
+	    	areaX=geoJson.features[0].properties.center['lng'];//直辖市
+	    }
+	    var areaY=geoJson.features[0].properties.center[1];
+	    if(areaY==undefined){
+	    	areaY=geoJson.features[0].properties.center['lat'];//直辖市
+	    }
+	    if(type=="area"){
+	    	areaZoom=9;
+	    }else if(type=="city"){
 
+	    }
 	    var convertData = function (data) {
 	        var res = [];
 	        for (var i = 0; i < data.length; i++) {
@@ -213,15 +240,15 @@ function <portlet:namespace/>init(url,<portlet:namespace/>data,type){
 	            }],
 	            globalCoord: false // 缺省为 false
 	        },
-	            title: {
-	                top:20,
-	                text: '用户地区分布',
-	                subtext: '',
-	                x: 'center',
-	                textStyle: {
-	                    color: '#ccc'
-	                }
-	            },    
+// 	            title: {
+// 	                top:20,
+// 	                text: '用户地区分布',
+// 	                subtext: '',
+// 	                x: 'center',
+// 	                textStyle: {
+// 	                    color: '#ccc'
+// 	                }
+// 	            },    
 
 	           tooltip: {
 	                trigger: 'item',
@@ -278,6 +305,8 @@ function <portlet:namespace/>init(url,<portlet:namespace/>data,type){
 	                map: 'china',
 	                show: true,
 	                roam: true,
+	                zoom: areaZoom,//设置省市区大小
+	                center: [areaX, areaY], // 中心位置坐标
 	                label: {
 	    				normal: {
 	    					show: true
@@ -286,6 +315,7 @@ function <portlet:namespace/>init(url,<portlet:namespace/>data,type){
 	    					show: false,
 	    				}
 	    			},
+	    			regions :regions,
 	                itemStyle: {
 	                    normal: {
 	                    	areaColor: '#ddd14c',
@@ -294,7 +324,7 @@ function <portlet:namespace/>init(url,<portlet:namespace/>data,type){
 	                        shadowBlur: 20
 	                    },
 	    				 emphasis: {
-	                        areaColor: '#0a2dae',//悬浮区背景
+	                        areaColor: '#ae7d42',//悬浮区背景
 	                    }
 	                }
 	            },
