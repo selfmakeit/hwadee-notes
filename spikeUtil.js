@@ -59,10 +59,13 @@ export let spike ={
 		// 		res = true;
 		// 	}
 		// }
-		else if(obj== null){
+		else if(obj=== null|| obj ==='null'){
 			res = true;
 		}
 		else if (obj.constructor === Object && Object.keys(obj).length  == 0) {
+		    res = true;
+		}
+		else if (obj === "") {
 		    res = true;
 		}
 		return res;
@@ -73,7 +76,6 @@ export let spike ={
 			url: url+fileUrl, //仅为示例，并非真实的资源
 			success: (res) => {
 				if (res.statusCode === 200) {
-					console.log('下载成功');
 				}
 				let that = this;
 				uni.saveFile({
@@ -90,7 +92,6 @@ export let spike ={
 							uni.openDocument({
 								filePath: res2.savedFilePath,
 								success: function(res2) {
-									// console.log('打开文档成功');
 								}
 							});
 						}, 3000)
@@ -99,25 +100,20 @@ export let spike ={
 				}
 			});
 			downloadTask.onProgressUpdate((res) => {
-				console.log('下载进度' + res.progress);
-				console.log('已经下载的数据长度' + res.totalBytesWritten);
-				console.log('预期需要下载的数据总长度' + res.totalBytesExpectedToWrite);
 		});
 	},
 	//预览保存图片
 	previewAndDownImg(imageUrl){
 	        var images = [];
 	        images.push(imageUrl);
-	        console.log(images)  // ["http://192.168.100.251:8970/6_1597822634094.png"]
 	        uni.previewImage({ // 预览图片  图片路径必须是一个数组 => ["http://192.168.100.251:8970/6_1597822634094.png"]
 	            current:0,
 	            urls:images,
 	            longPressActions: {  //长按保存图片到相册
 	                itemList: ['保存图片'],
 	                success: (data)=> {
-	                    console.log(data);
 	                    uni.saveImageToPhotosAlbum({ //保存图片到相册
-	                        filePath: payUrl,
+	                        filePath: imageUrl,
 	                        success: function () {
 	                            uni.showToast({icon:'success',title:'保存成功'})
 	                        },
@@ -127,7 +123,6 @@ export let spike ={
 	                    });
 	                },
 	                fail: (err)=> {
-	                    console.log(err.errMsg);
 	                }
 	        }
 	        });
@@ -208,7 +203,7 @@ function isJsonString(str) {
     }
 
 function queryDictByTypeCode(type){
-	var requestUrl = url+"/api/jsonws/dictionary-portlet.dictionaryitem/get-dictionarys-by-code-type-common";
+	var requestUrl = url+"/api/jsonws/dictionary-portlet.dictionaryitem/get-dictionarys-by-type-code-all-common";
 	var param ={typeCode: type};
 	return new Promise((resolve,reject) =>{
 		uni.request({
